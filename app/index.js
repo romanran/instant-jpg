@@ -36,6 +36,6 @@ function removeFile(filePath) {
     })
 }
 
-nw.Window.open('../dist/index.html', {}, function (win) {
+nw.Window.open('./dist/index.html', {}, function (win) {
     console.log(win);
 });

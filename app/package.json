@@ -3,17 +3,12 @@
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
-    "type": "module",
     "author": "",
     "license": "MIT",
+    "nodejs": true,
     "dependencies": {
         "jimp": "^0.16.1",
         "node-watch": "^0.7.3"
-    },
-    "scripts": {
-        "start": "index.js",
-        "start-nw": "nw",
-        "build:exe": "nwbuild --buildDir exec/ ./"
     },
     "window": {
         "title": "JPG -> PNG for Nvidia Shadowplay",
@@ -29,8 +24,5 @@
     },
     "webkit": {
         "plugin": true
-    },
-    "devDependencies": {
-        "nw-builder": "^3.8.2-beta.1"
     }
 }
