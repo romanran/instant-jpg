@@ -1,0 +1,36 @@
+{
+    "name": "nvidia-screenshot-jpg",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "type": "module",
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "jimp": "^0.16.1",
+        "node-watch": "^0.7.3"
+    },
+    "scripts": {
+        "start": "index.js",
+        "start-nw": "nw",
+        "build:exe": "nwbuild --buildDir exec/ ./"
+    },
+    "window": {
+        "title": "JPG -> PNG for Nvidia Shadowplay",
+        "toolbar": false,
+        "frame": false,
+        "width": 800,
+        "height": 500,
+        "position": "mouse",
+        "min_width": 400,
+        "min_height": 200,
+        "max_width": 800,
+        "max_height": 600
+    },
+    "webkit": {
+        "plugin": true
+    },
+    "devDependencies": {
+        "nw-builder": "^3.8.2-beta.1"
+    }
+}

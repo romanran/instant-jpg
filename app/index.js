@@ -1,7 +1,7 @@
-import jimp from 'jimp'
-import watch from 'node-watch'
-import fs from 'fs'
-import path from 'path'
+const jimp = require('jimp')
+const watch = require('node-watch')
+const fs = require('fs')
+const path = require('path')
 
 const watchDir = path.resolve('./testFolder')
 const removePng = true
@@ -35,3 +35,7 @@ function removeFile(filePath) {
         }
     })
 }
+
+nw.Window.open('../dist/index.html', {}, function (win) {
+    console.log(win);
+});
