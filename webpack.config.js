@@ -1,24 +1,39 @@
 const path = require('path')
 const { IgnorePlugin } = require('webpack')
+const TerserPlugin = require('terser-webpack-plugin')
 
-const optionalPlugins = []
-if (process.platform !== 'darwin') {
-    // don't ignore on OSX
-    optionalPlugins.push(new IgnorePlugin({ resourceRegExp: /^fsevents$/ }))
-}
+// const optionalPlugins = []
+// if (process.platform !== 'darwin') {
+//     // don't ignore on OSX
+//     optionalPlugins.push(new IgnorePlugin({ resourceRegExp: /^fsevents$/ }))
+// }
 
 const config = {
+    target: 'electron-renderer',
     entry: {
-        background: './src/electron/background.js',
-        preload: './src/electron/preload.js',
+        preload: './src/preload.js',
     },
-    target: 'node',
     output: {
         filename: '[name].js',
-        path: path.resolve(__dirname, 'electron'),
+        path: path.resolve(__dirname, './appDist'),
+        clean: false,
     },
-    plugins: [...optionalPlugins],
+    // externals: { electron: 'require("electron")' },
+    // plugins: [...optionalPlugins],
     mode: 'production',
+    optimization: {
+        minimize: false,
+        minimizer: [
+            new TerserPlugin({
+                extractComments: false,
+                terserOptions: {
+                    format: {
+                        comments: false,
+                    },
+                },
+            }),
+        ],
+    },
 }
 
 module.exports = () => {
