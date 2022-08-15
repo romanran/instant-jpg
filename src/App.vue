@@ -1,14 +1,45 @@
-
 <template>
-  <div>
-  <div>Directory: <input /></div>
-  <div>Remove png: <input type="checkbox" checked/></div>
-  <div>Quality: <input value="90" type="number" min="60" max="90"/></div>
-  </div>
+    <div>
+        <div>Directory: {{ dir }} <button @click="openExplorer">Select</button></div>
+        <div>Remove png: <input type="checkbox" checked v-model="remove" @change="setConfig" /></div>
+        <div>Quality: <input type="range" min="50" max="100" v-model="quality" @change="setConfig" /> {{ quality }}</div>
+    </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
+
+const dir = ref('')
+const remove = ref(true)
+const quality = ref(90)
+
+async function openExplorer() {
+    const newDir = await window.api?.openExplorer()
+    if (newDir) {
+        dir.value = newDir
+        setConfig()
+    }
+}
+
+async function getConfig() {
+    const config = await window.api?.readStore('config')
+    if (config) {
+        dir.value = config.watchDir
+        remove.value = config.removePng
+        quality.value = config.quality
+    }
+}
+
+getConfig()
+
+async function setConfig() {
+    const newConfig = {
+        watchDir: dir.value,
+        removePng: remove.value,
+        quality: quality.value,
+    }
+    await window.api?.setStore('config', newConfig)
+}
 </script>
 
-<style scoped>
-</style>
+<style></style>

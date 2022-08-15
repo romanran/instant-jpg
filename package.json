@@ -5,14 +5,14 @@
     "description": "",
     "main": "main.js",
     "scripts": {
-        "start": "vite",
-        "preview": "vite preview",
-        "electron": "electron .",
+        "start": "env-cmd vite",
+        "watch": "nodemon -L --watch ./src/**/*.* --exec \"npm run build\"",
+        "electron": "nodemon --watch electron --exec \"electron .\"",
         "postinstall": "electron-builder install-app-deps",
         "build": "npm run build:app && npm run build:electron",
         "build:app": "vite build",
         "build:electron": "webpack --mode=production --node-env=production",
-        "build:exe": "electron-builder --win portable"
+        "build:exe": "npm run build && electron-builder --win portable"
     },
     "license": "ISC",
     "devDependencies": {
@@ -22,6 +22,7 @@
         "@webpack-cli/generators": "^2.5.0",
         "electron": "^20.0.2",
         "electron-builder": "^23.3.3",
+        "nodemon": "^2.0.19",
         "terser-webpack-plugin": "^5.3.4",
         "vite": "^3.0.7",
         "vite-plugin-electron": "^0.9.0",
@@ -31,6 +32,7 @@
     "dependencies": {
         "chokidar": "^3.5.3",
         "electron-store": "^8.1.0",
+        "env-cmd": "^10.1.0",
         "fs-extra": "^10.1.0",
         "jimp": "^0.16.1",
         "lodash": "^4.17.21",
