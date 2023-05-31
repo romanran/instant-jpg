@@ -1,13 +1,13 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 519:
+/***/ 532:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const { ipcMain } = __webpack_require__(298)
 const electron = __webpack_require__(298)
 
-module.exports = function (win, storage) {
+module.exports = function (win, storage, fileHandler) {
     const handlers = {
         async readStore(event, name) {
             return storage.get(name)
@@ -20,6 +20,9 @@ module.exports = function (win, storage) {
                 properties: ['openDirectory'],
             })
             return response.canceled ? false : response.filePaths[0]
+        },
+        async scanDir() {
+            return fileHandler.scanDir()
         },
     }
 
@@ -75,7 +78,7 @@ var __webpack_exports__ = {};
 
 const { contextBridge, ipcRenderer } = __webpack_require__(298)
 
-const handlers = __webpack_require__(519)
+const handlers = __webpack_require__(532)
 
 /****************************************************************
  * Auto-creates window.api[handleName] handlers

@@ -1,8 +1,13 @@
 <template>
     <div>
         <div>Directory: {{ dir }} <button @click="openExplorer">Select</button></div>
-        <div>Remove png: <input type="checkbox" checked v-model="remove" @change="setConfig" /></div>
+        <div>Remove original PNG files: <input type="checkbox" checked v-model="remove" @change="setConfig" /></div>
+        asd
         <div>Quality: <input type="range" min="50" max="100" v-model="quality" @change="setConfig" /> {{ quality }}</div>
+        <div>
+            <span>Scan directory:</span> <button @click="scanDir">Select</button>
+            <p></p>
+        </div>
     </div>
 </template>
 
@@ -39,6 +44,10 @@ async function setConfig() {
         quality: quality.value,
     }
     await window.api?.setStore('config', newConfig)
+}
+
+async function scanDir() {
+    window.api?.scanDir()
 }
 </script>
 

@@ -2,7 +2,7 @@
 
 const { contextBridge, ipcRenderer } = require('electron')
 
-const handlers = require('../electron/service/ipc')
+const handlers = require('../electron/service/handlers/ipc')
 
 /****************************************************************
  * Auto-creates window.api[handleName] handlers
