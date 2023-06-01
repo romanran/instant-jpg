@@ -3,10 +3,5 @@ node_modules/
 
 dist/
 
-testFolder/
-
-render/
-
 cache/
-
-electron/
+testFolder/

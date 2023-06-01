@@ -2,14 +2,14 @@
 
 const { contextBridge, ipcRenderer } = require('electron')
 
-const handlers = require('../electron/service/handlers/ipc')
-
 /****************************************************************
  * Auto-creates window.api[handleName] handlers
  *
  *
  * *************/
-const apiFunctions = Object.keys(handlers()).reduce((reducer, key) => {
+const handlers = ['readStore', 'setStore', 'openExplorer', 'convertDir']
+
+const apiFunctions = handlers.reduce((reducer, key) => {
     reducer[key] = async (...args) => {
         const response = await ipcRenderer.invoke(key, ...args)
         return response
@@ -20,4 +20,14 @@ const apiFunctions = Object.keys(handlers()).reduce((reducer, key) => {
 contextBridge.exposeInMainWorld('api', {
     ...apiFunctions,
     closeWindow() {},
+    receive: (channel, listener) => {
+        let validChannels = ['stream-data']
+        if (validChannels.includes(channel)) {
+            // Deliberately strip event as it includes `sender`.
+            ipcRenderer.on(channel, (event, ...args) => {
+                console.log('aaa', channel)
+                listener(...args)
+            })
+        }
+    },
 })

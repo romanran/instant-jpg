@@ -1,44 +1,10 @@
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
-
-/***/ 532:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const { ipcMain } = __webpack_require__(298)
-const electron = __webpack_require__(298)
-
-module.exports = function (win, storage, fileHandler) {
-    const handlers = {
-        async readStore(event, name) {
-            return storage.get(name)
-        },
-        async setStore(event, name, data) {
-            return storage.set(name, data)
-        },
-        async openExplorer() {
-            const response = await electron.dialog.showOpenDialog({
-                properties: ['openDirectory'],
-            })
-            return response.canceled ? false : response.filePaths[0]
-        },
-        async scanDir() {
-            return fileHandler.scanDir()
-        },
-    }
-
-    Object.keys(handlers).forEach((key) => {
-        ipcMain?.handle(key, handlers[key])
-    })
-    return handlers
-}
-
-
-/***/ }),
 
 /***/ 298:
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("electron");
 
 /***/ })
@@ -71,21 +37,20 @@ module.exports = require("electron");
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-"use strict";
 
 
 const { contextBridge, ipcRenderer } = __webpack_require__(298)
-
-const handlers = __webpack_require__(532)
 
 /****************************************************************
  * Auto-creates window.api[handleName] handlers
  *
  *
  * *************/
-const apiFunctions = Object.keys(handlers()).reduce((reducer, key) => {
+const handlers = ['readStore', 'setStore', 'openExplorer', 'convertDir']
+
+const apiFunctions = handlers.reduce((reducer, key) => {
     reducer[key] = async (...args) => {
         const response = await ipcRenderer.invoke(key, ...args)
         return response
@@ -96,6 +61,16 @@ const apiFunctions = Object.keys(handlers()).reduce((reducer, key) => {
 contextBridge.exposeInMainWorld('api', {
     ...apiFunctions,
     closeWindow() {},
+    receive: (channel, listener) => {
+        let validChannels = ['stream-data']
+        if (validChannels.includes(channel)) {
+            // Deliberately strip event as it includes `sender`.
+            ipcRenderer.on(channel, (event, ...args) => {
+                console.log('aaa', channel)
+                listener(...args)
+            })
+        }
+    },
 })
 
 })();
