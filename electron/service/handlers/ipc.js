@@ -7,7 +7,8 @@ module.exports = function (win, storage, fileHandler) {
             return storage.get(name)
         },
         async setStore(event, name, data) {
-            return storage.set(name, data)
+            storage.set(name, data)
+            fileHandler.watchDir()
         },
         async openExplorer() {
             const response = await electron.dialog.showOpenDialog({

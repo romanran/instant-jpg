@@ -13,6 +13,8 @@ module.exports = class FileHandler {
     }
 
     watchDir() {
+        this.config = this.storage.get('config')
+        this.stopWatch()
         this.watcher = chokidar.watch(this.config.watchDir, {
             ignored: '!*.png',
             ignoreInitial: true,
@@ -24,13 +26,12 @@ module.exports = class FileHandler {
         this.watcher.on('add', async (filePath) => {
             const extension = path.extname(filePath)
             if (extension === '.png') {
-                convertImage(filePath)
+                convertImage(filePath, this.config.quality, this.config.removePng)
             }
         })
     }
-
     stopWatch() {
-        this.watcher.close()
+        this.watcher?.close()
     }
     convertDir() {
         const config = this.storage.get('config')
@@ -49,12 +50,10 @@ module.exports = class FileHandler {
                 const stream = new FilesStream(files, { ...config })
                 stream._read()
                 stream.on('end', (result) => {
-                    console.log('end')
-                    this.win.webContents.send('stream-data', { type: 'stream-data', chunk: 'end' })
+                    this.win.webContents.send('convert-stream', { path: null, end: true, result })
                 })
-                stream.on('data', (data) => {
-                    console.log(data)
-                    this.win.webContents.send('stream-data', { type: 'stream-data', chunk: data })
+                stream.on('status', (status) => {
+                    this.win.webContents.send('convert-stream', { ...status, end: false })
                 })
             })
     }

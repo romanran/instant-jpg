@@ -5,7 +5,6 @@ const { contextBridge, ipcRenderer } = require('electron')
 /****************************************************************
  * Auto-creates window.api[handleName] handlers
  *
- *
  * *************/
 const handlers = ['readStore', 'setStore', 'openExplorer', 'convertDir']
 
@@ -21,11 +20,9 @@ contextBridge.exposeInMainWorld('api', {
     ...apiFunctions,
     closeWindow() {},
     receive: (channel, listener) => {
-        let validChannels = ['stream-data']
+        let validChannels = ['convert-stream']
         if (validChannels.includes(channel)) {
-            // Deliberately strip event as it includes `sender`.
             ipcRenderer.on(channel, (event, ...args) => {
-                console.log('aaa', channel)
                 listener(...args)
             })
         }

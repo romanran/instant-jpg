@@ -1,7 +1,12 @@
+@font-face {
+    font-family: 'NVidia';
+    src: url('./assets/GeForce-Light-Alt.ttf') format('woff');
+}
+
 :root {
-    font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    line-height: 24px;
+    font-family: NVidia, Inter, Avenir, Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1.5;
     font-weight: 400;
 
     color: rgba(255, 255, 255, 0.87);
@@ -12,14 +17,23 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
+    --green: #00ca25;
 }
 
 body {
     margin: 0;
-    display: flex;
     background: #333339;
-    place-items: center;
     width: 100%;
-    min-width: 320px;
-    min-height: 100vh;
+    height: 100%;
+    overflow: auto;
+    box-sizing: border-box;
+}
+button {
+    cursor: pointer;
+}
+#app {
+    height: 100vh;
+}
+* {
+    box-sizing: inherit;
 }

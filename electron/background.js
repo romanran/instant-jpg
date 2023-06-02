@@ -17,11 +17,11 @@ module.exports = () => {
 
     async function createWindow() {
         const win = new BrowserWindow({
-            width: 420,
-            height: 420,
+            // width: 420,
+            // height: 420,
             frame: true,
             autoHideMenuBar: true,
-            maximizable: false,
+            maximizable: true,
             fullscreenable: false,
             show: isDevelopment || !config,
             webPreferences: {
