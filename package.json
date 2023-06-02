@@ -1,12 +1,12 @@
 {
-    "name": "nvidia-screenshot-jpg",
+    "name": "instant-jpg",
     "author": "Roman Ranniew",
     "version": "1.0.0",
-    "description": "",
+    "description": "InstantJPG - directory watcher for converting PNG's to JPG's on the fly",
     "main": "main.js",
     "scripts": {
         "start": "env-cmd vite",
-        "watch": "nodemon -L --watch ./src/**/*.* --exec \"npm run build\"",
+        "watch": "nodemon -L --watch ./src/**/*.* --exec \"npm run build\" ",
         "electron": "nodemon --watch electron --exec \"electron .\"",
         "postinstall": "electron-builder install-app-deps",
         "build": "npm run build:app && npm run build:electron",
@@ -23,6 +23,7 @@
         "electron": "^20.0.2",
         "electron-builder": "^23.3.3",
         "nodemon": "^2.0.19",
+        "sass": "^1.62.1",
         "terser-webpack-plugin": "^5.3.4",
         "vite": "^3.0.7",
         "vite-plugin-electron": "^0.9.0",
@@ -36,9 +37,10 @@
         "fs-extra": "^10.1.0",
         "jimp": "^0.16.1",
         "lodash": "^4.17.21",
-        "vue": "^3.2.37"
+        "vue": "^3.2.37",
+        "workerpool": "^6.4.0"
     },
     "build": {
-        "appId": "nvidia-png-to-jpeg"
+        "appId": "instant-jpg"
     }
 }

@@ -1,23 +1,47 @@
+@font-face {
+    font-family: 'NVidia';
+    src: url('./assets/GeForce-Light-Alt.ttf') format('woff');
+}
+
+@font-face {
+    font-family: 'NVidia';
+    src: url('./assets/GeForce-Bold.ttf') format('woff');
+    font-weight: bold;
+}
+
 :root {
-    font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+    font-family: NVidia, Inter, Avenir, Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 24px;
+    line-height: 1.5;
     font-weight: 400;
 
     color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
+    background-color: #333339;
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
+    --primary-color: #76b900;
+    --primary-color-l: #94d71f;
+    --primary-color-d: #66a000;
 }
 
 body {
     margin: 0;
-    display: flex;
-    place-items: center;
-    min-width: 320px;
-    min-height: 100vh;
+    background: #333339;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    box-sizing: border-box;
+}
+button {
+    cursor: pointer;
+}
+#app {
+    height: 100vh;
+}
+* {
+    box-sizing: inherit;
 }
