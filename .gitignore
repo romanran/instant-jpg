@@ -7,3 +7,5 @@ cache/
 testFolder/
 
 appDist/
+
+utils/testImages/*.jpg

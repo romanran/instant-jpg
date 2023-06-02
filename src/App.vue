@@ -1,7 +1,8 @@
 <template>
     <div class="settings" :class="converting && 'disabled'">
         <label class="settings__line settings__label"
-            >Directory: <strong>{{ dir }} </strong><button class="" @click="setWatchDir">Select directory</button></label
+            >Directory: <strong>{{ dir }} </strong
+            ><button :class="explorerOpen && 'disabled'" @click="setWatchDir">Select directory</button></label
         >
         <label class="settings__line settings__label"
             >Remove original PNG files: <input type="checkbox" checked v-model="remove" @change="setConfig"
@@ -11,7 +12,7 @@
             <input
                 ref="$quality"
                 type="range"
-                min="50"
+                min="60"
                 max="100"
                 v-model="quality"
                 @change="setConfig"
@@ -21,19 +22,9 @@
         >
         <div class="settings__line">
             <button @click="() => convertDir()">Convert files in default directory</button>
-            <button class="" @click="convertCustomDir">Convert files in custom directory</button>
+            <button :class="explorerOpen && 'disabled'" @click="convertCustomDir">Convert files in custom directory</button>
         </div>
-        <p class="convert-list__status" v-html="convertStatus" v-show="convertStatus"></p>
-        <div class="convert-list" ref="$convertList" v-show="convertStatus">
-            <p
-                class="convert-list__filename"
-                :class="file.status"
-                :style="`order: ${file.order};`"
-                v-for="file in convertedFiles"
-            >
-                {{ `${file.path} - ${file.status}` }}
-            </p>
-        </div>
+        <VConvertList :convertStatus="convertStatus" :convertedFiles="convertedFiles"></VConvertList>
     </div>
     <div class="overlay" v-if="converting">
         <button class="overlay__button" @click="stopConvert">Stop</button>
@@ -45,80 +36,31 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import VConvertList from './components/VConvertList.vue'
+import { useConfig, useActions } from './logic/handler.js'
 
-const dir = ref('')
-const remove = ref(true)
-const quality = ref(90)
-const convertedFiles = ref({})
-const converting = ref(false)
-const convertStatus = ref()
+const { dir, remove, quality, getConfig, setConfig } = useConfig()
+const { convertDir, converting, convertedFiles, convertStatus, workProgress } = useActions()
 const convertStatusAdditional = ref()
-const workProgress = ref('')
-const $convertList = ref()
+
 const $quality = ref()
 
 async function setWatchDir() {
+    explorerOpen.value = true
     const newDir = await window.api?.openExplorer()
+    explorerOpen.value = false
     if (newDir) {
         dir.value = newDir
         setConfig()
     }
 }
 
-async function getConfig() {
-    const config = await window.api?.readStore('config')
-
-    if (config) {
-        dir.value = config.watchDir
-        remove.value = config.removePng
-        quality.value = config.quality
-    }
-}
-
 getConfig()
 
-async function setConfig() {
-    const newConfig = {
-        watchDir: dir.value,
-        removePng: remove.value,
-        quality: quality.value,
-    }
-    await window.api?.setStore('config', newConfig)
-}
-
-function convertDir(targetDir = dir.value) {
-    // targetDir || (targetDir = dir.value)
-    let fileIndex = 0
-    convertedFiles.value = {}
-    converting.value = true
-    convertStatus.value = null
-    workProgress.value = workProgressDefault
-
-    window.api?.convertDir(targetDir)
-    window.api?.receive('convert-stream', (e) => {
-        if (!converting.value) {
-            return
-        }
-        if (e.filesNumber) {
-            convertStatus.value = `Found <strong>${e.filesNumber} files</strong>, converting...`
-            return
-        }
-        if (e.id) {
-            if (!convertedFiles.value[e.id]) {
-                e.order = fileIndex++
-                $convertList.value.scrollTo({ left: 0, top: $convertList.value.scrollHeight + 20 })
-            }
-            e.path = e.path.replace(targetDir, '')
-            convertedFiles.value[e.id] = { ...convertedFiles.value[e.id], ...e }
-        }
-        if (e.end) {
-            converting.value = false
-            convertStatus.value = `Done! <strong>${Object.keys(convertedFiles.value).length} files</strong> converted`
-        }
-    })
-}
 async function convertCustomDir() {
+    explorerOpen.value = true
     const targetDir = await window.api?.openExplorer()
+    explorerOpen.value = false
     targetDir && convertDir(targetDir)
 }
 function stopConvert() {
@@ -250,6 +192,8 @@ button {
     &:active {
         background: var(--primary-color-d);
         box-shadow: 0px 0 5px rgba(black, 0.4);
+    &.disabled {
+        pointer-events: none;
     }
 }
 
@@ -276,7 +220,7 @@ button {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(black, 0.1);
+    background: rgba(black, 0.2);
 }
 .overlay__image {
     width: 100%;
