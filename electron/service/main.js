@@ -10,14 +10,15 @@ const defaultConfig = {
 }
 
 function start(win, storage) {
-    const fileHandler = new FileHandler(win, storage)
-    addIpcHandlers(win, storage, fileHandler)
-    fileHandler.watchDir()
     let config = storage.get('config')
-
     if (!config) {
         storage.set('config', defaultConfig)
     }
+
+    const fileHandler = new FileHandler(win, storage)
+    addIpcHandlers(win, storage, fileHandler)
+    fileHandler.watchDir()
+
     win.on('close', async function (e) {
         e.preventDefault()
         await fileHandler.stopConvert()

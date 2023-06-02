@@ -6,7 +6,7 @@
     "main": "main.js",
     "scripts": {
         "start": "env-cmd vite",
-        "watch": "nodemon -L --watch ./src/**/*.* --exec \"npm run build\"",
+        "watch": "nodemon -L --watch ./src/**/*.* --exec \"npm run build\" ",
         "electron": "nodemon --watch electron --exec \"electron .\"",
         "postinstall": "electron-builder install-app-deps",
         "build": "npm run build:app && npm run build:electron",

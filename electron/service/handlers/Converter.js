@@ -19,6 +19,7 @@ module.exports = class Converter {
         this.files = files
         this.options = options
         this.win = win
+        this.stopping = false
         this.win.webContents.send('convert-stream', { filesNumber: files.length, end: false })
         this.pool = workerpool.pool('./electron/service/handlers/workerPool.js', {
             workerTerminateTimeout: 5000,
@@ -35,9 +36,10 @@ module.exports = class Converter {
         } catch (err) {
             // was terminated
         }
-        // this.win.webContents.send('convert-stream', { end: true })
+        !this.stopping && this.win?.webContents.send('convert-stream', { end: true })
     }
     async stop() {
+        this.stopping = true
         await this.pool.terminate()
         try {
             this.win.webContents.send('convert-stream', { end: true })

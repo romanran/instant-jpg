@@ -36,9 +36,10 @@
         </div>
     </div>
     <div class="overlay" v-if="converting">
-        <button @click="stopConvert">Stop</button>
-        <span v-show="convertStatusAdditional">{{ convertStatusAdditional }}</span>
-        <span>{{ workProgress }}</span>
+        <button class="overlay__button" @click="stopConvert">Stop</button>
+        <div class="overlay__image"></div>
+        <span class="overlay__text" v-show="convertStatusAdditional">{{ convertStatusAdditional }}</span>
+        <span class="overlay__text">{{ workProgress }}</span>
     </div>
 </template>
 
@@ -141,7 +142,7 @@ onMounted(() => {
         } else {
             workProgress.value += '.'
         }
-    }, 500)
+    }, 300)
 })
 </script>
 
@@ -195,7 +196,7 @@ onMounted(() => {
         color: orange;
     }
     &.converting {
-        color: yellowgreen;
+        color: yellow;
     }
 }
 input[type='range'] {
@@ -206,7 +207,7 @@ input[type='range'] {
     border-radius: 5px;
     height: 4px;
     background-image: linear-gradient(var(--primary-color), var(--primary-color));
-    background-size: 70% 100%;
+    background-size: 100% 100%;
     background-repeat: no-repeat;
     &:active {
         cursor: grabbing;
@@ -251,10 +252,7 @@ button {
         box-shadow: 0px 0 5px rgba(black, 0.4);
     }
 }
-* {
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary-color) transparent;
-}
+
 *::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -270,6 +268,7 @@ button {
 }
 .overlay {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     position: fixed;
@@ -278,5 +277,20 @@ button {
     right: 0;
     bottom: 0;
     background: rgba(black, 0.1);
+}
+.overlay__image {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-image: url('./assets/noise2.gif');
+    background-size: 20%;
+    opacity: 0.05;
+    z-index: -1;
+}
+.overlay__text {
+    text-align: left;
+    font-weight: bold;
+    width: 100px;
+    white-space: nowrap;
 }
 </style>
