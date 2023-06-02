@@ -6,7 +6,7 @@ const { contextBridge, ipcRenderer } = require('electron')
  * Auto-creates window.api[handleName] handlers
  *
  * *************/
-const handlers = ['readStore', 'setStore', 'openExplorer', 'convertDir']
+const handlers = ['readStore', 'setStore', 'openExplorer', 'convertDir', 'stopConvert']
 
 const apiFunctions = handlers.reduce((reducer, key) => {
     reducer[key] = async (...args) => {
@@ -18,7 +18,6 @@ const apiFunctions = handlers.reduce((reducer, key) => {
 
 contextBridge.exposeInMainWorld('api', {
     ...apiFunctions,
-    closeWindow() {},
     receive: (channel, listener) => {
         let validChannels = ['convert-stream']
         if (validChannels.includes(channel)) {

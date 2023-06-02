@@ -18,6 +18,11 @@ function start(win, storage) {
     if (!config) {
         storage.set('config', defaultConfig)
     }
+    win.on('close', async function (e) {
+        e.preventDefault()
+        await fileHandler.stopConvert()
+        win.destroy()
+    })
 }
 
 module.exports = start

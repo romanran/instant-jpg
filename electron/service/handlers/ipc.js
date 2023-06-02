@@ -3,10 +3,10 @@ const electron = require('electron')
 
 module.exports = function (win, storage, fileHandler) {
     const handlers = {
-        async readStore(event, name) {
+        readStore(event, name) {
             return storage.get(name)
         },
-        async setStore(event, name, data) {
+        setStore(event, name, data) {
             storage.set(name, data)
             fileHandler.watchDir()
         },
@@ -16,8 +16,11 @@ module.exports = function (win, storage, fileHandler) {
             })
             return response.canceled ? false : response.filePaths[0]
         },
-        async convertDir() {
-            return fileHandler.convertDir()
+        convertDir(event, targetDir) {
+            return fileHandler.convertDir.call(fileHandler, targetDir)
+        },
+        stopConvert() {
+            return fileHandler.stopConvert.call(fileHandler)
         },
     }
 

@@ -1,8 +1,8 @@
 {
-    "name": "nvidia-screenshot-jpg",
+    "name": "instant-jpg",
     "author": "Roman Ranniew",
     "version": "1.0.0",
-    "description": "",
+    "description": "InstantJPG - directory watcher for converting PNG's to JPG's on the fly",
     "main": "main.js",
     "scripts": {
         "start": "env-cmd vite",
@@ -41,6 +41,6 @@
         "workerpool": "^6.4.0"
     },
     "build": {
-        "appId": "nvidia-png-to-jpeg"
+        "appId": "instant-jpg"
     }
 }

@@ -1,7 +1,6 @@
 const chokidar = require('chokidar')
-const convertImage = require('./convertImage')
 const readdirp = require('readdirp')
-const FilesStream = require('./FilesStream')
+const Converter = require('./Converter')
 const path = require('path')
 
 module.exports = class FileHandler {
@@ -9,6 +8,7 @@ module.exports = class FileHandler {
         this.storage = storage
         this.win = win
         this.watcher
+        this.converter
         this.config = this.storage.get('config')
     }
 
@@ -26,17 +26,18 @@ module.exports = class FileHandler {
         this.watcher.on('add', async (filePath) => {
             const extension = path.extname(filePath)
             if (extension === '.png') {
-                convertImage(filePath, this.config.quality, this.config.removePng)
+                const converter = new Converter([filePath], this.config, this.win)
+                converter.start()
             }
         })
     }
     stopWatch() {
         this.watcher?.close()
     }
-    convertDir() {
+    convertDir(targetDir) {
         const config = this.storage.get('config')
         const files = []
-        readdirp(config.watchDir, { fileFilter: '*.png' })
+        readdirp(targetDir, { fileFilter: '*.png' })
             .on('data', (entry) => {
                 files.push(entry.fullPath)
             })
@@ -47,14 +48,11 @@ module.exports = class FileHandler {
                 console.error('fatal error', error)
             })
             .on('end', () => {
-                const stream = new FilesStream(files, { ...config })
-                stream._read()
-                stream.on('end', (result) => {
-                    this.win.webContents.send('convert-stream', { path: null, end: true, result })
-                })
-                stream.on('status', (status) => {
-                    this.win.webContents.send('convert-stream', { ...status, end: false })
-                })
+                this.converter = new Converter(files, config, this.win)
+                this.converter.start()
             })
+    }
+    async stopConvert() {
+        return await this.converter?.stop()
     }
 }

@@ -47,7 +47,7 @@ module.exports = () => {
 
     app.on('window-all-closed', () => {
         if (process.platform !== 'darwin') {
-            app.quit()
+            // app.quit()
         }
     })
 
@@ -106,17 +106,17 @@ module.exports = () => {
         dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`)
     })
 
-    if (isDevelopment) {
-        if (process.platform === 'win32') {
-            process.on('message', (data) => {
-                if (data === 'graceful-exit') {
-                    app.quit()
-                }
-            })
-        } else {
-            process.on('SIGTERM', () => {
-                app.quit()
-            })
-        }
-    }
+    // if (isDevelopment) {
+    //     if (process.platform === 'win32') {
+    //         process.on('message', (data) => {
+    //             if (data === 'graceful-exit') {
+    //                 app.quit()
+    //             }
+    //         })
+    //     } else {
+    //         process.on('SIGTERM', () => {
+    //             app.quit()
+    //         })
+    //     }
+    // }
 }
