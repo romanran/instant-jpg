@@ -40,10 +40,17 @@ import VConvertList from './components/VConvertList.vue'
 import { useConfig, useActions } from './logic/handler.js'
 
 const { dir, remove, quality, getConfig, setConfig } = useConfig()
-const { convertDir, converting, convertedFiles, convertStatus, workProgress } = useActions()
+const { convertDir, converting, convertedFiles, convertStatus, workProgress, workProgressDefault } = useActions()
 const convertStatusAdditional = ref()
 
+const explorerOpen = ref(false)
 const $quality = ref()
+
+initWin()
+async function initWin() {
+    await getConfig()
+    handleRange()
+}
 
 async function setWatchDir() {
     explorerOpen.value = true
@@ -54,8 +61,6 @@ async function setWatchDir() {
         setConfig()
     }
 }
-
-getConfig()
 
 async function convertCustomDir() {
     explorerOpen.value = true
@@ -75,7 +80,6 @@ function handleRange() {
     $quality.value.style.backgroundSize = ((val - min) * 100) / (max - min) + '% 100%'
 }
 
-const workProgressDefault = 'Converting'
 onMounted(() => {
     handleRange()
     setInterval(() => {
@@ -192,6 +196,7 @@ button {
     &:active {
         background: var(--primary-color-d);
         box-shadow: 0px 0 5px rgba(black, 0.4);
+    }
     &.disabled {
         pointer-events: none;
     }

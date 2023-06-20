@@ -31,11 +31,11 @@ export function useConfig() {
 }
 
 export function useActions() {
+    const workProgressDefault = 'Converting'
     const convertedFiles = ref({})
     const converting = ref(false)
     const convertStatus = ref()
     const workProgress = ref('')
-    const $convertList = ref()
 
     function convertDir(targetDir = dir.value) {
         // targetDir || (targetDir = dir.value)
@@ -58,7 +58,6 @@ export function useActions() {
             if (e.id) {
                 if (!convertedFiles.value[e.id]) {
                     e.order = fileIndex++
-                    $convertList.value.scrollTo({ left: 0, top: $convertList.value.scrollHeight + 20 })
                 }
                 e.path = e.path.replace(targetDir, '')
                 convertedFiles.value[e.id] = { ...convertedFiles.value[e.id], ...e }
@@ -75,6 +74,6 @@ export function useActions() {
         convertedFiles,
         convertStatus,
         workProgress,
-        $convertList,
+        workProgressDefault,
     }
 }
