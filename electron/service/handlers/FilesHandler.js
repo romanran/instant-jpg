@@ -3,7 +3,7 @@ const readdirp = require('readdirp')
 const Converter = require('./Converter')
 const path = require('path')
 
-module.exports = class FileHandler {
+module.exports = class FilesHandler {
     constructor(win, storage) {
         this.storage = storage
         this.win = win
@@ -37,6 +37,11 @@ module.exports = class FileHandler {
     convertDir(targetDir) {
         const config = this.storage.get('config')
         const files = []
+
+        function startConverting() {
+            this.converter = new Converter(files, config, this.win)
+            this.converter.start()
+        }
         readdirp(targetDir, { fileFilter: '*.png' })
             .on('data', (entry) => {
                 files.push(entry.fullPath)
@@ -47,10 +52,7 @@ module.exports = class FileHandler {
             .on('error', (error) => {
                 console.error('fatal error', error)
             })
-            .on('end', () => {
-                this.converter = new Converter(files, config, this.win)
-                this.converter.start()
-            })
+            .on('end', startConverting.bind(this))
     }
     async stopConvert() {
         return await this.converter?.stop()

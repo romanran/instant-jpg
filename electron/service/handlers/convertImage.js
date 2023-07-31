@@ -11,7 +11,8 @@ function removeFile(filePath) {
 
 module.exports = function convertImage(filePath, quality, removePng, id, suffix) {
     return new Promise((resolve, reject) => {
-        const onImageRead = async (err, image) => {
+
+        async function onImageRead(err, image) {
             if (err) {
                 console.log('image read error', err)
                 return reject(err)
@@ -25,13 +26,14 @@ module.exports = function convertImage(filePath, quality, removePng, id, suffix)
                 }
 
                 if (removePng) {
-                    id && this.workerEmit({ path: filePath, id, end: false, status: 'removeOriginal' })
                     removeFile(filePath)
+                    id && this.workerEmit({ path: filePath, id, end: false, status: 'removeOriginal' })
                 }
                 resolve({ path: newFilePath, id, status: 'done' })
             })
         }
+
         id && this.workerEmit({ path: filePath, id, end: false, status: 'reading' })
-        jimp.read(filePath, onImageRead)
+        jimp.read(filePath, onImageRead.bind(this))
     })
 }

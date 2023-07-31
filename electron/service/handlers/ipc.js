@@ -1,14 +1,14 @@
 const { ipcMain } = require('electron')
 const electron = require('electron')
 
-module.exports = function (win, storage, fileHandler) {
+module.exports = function (win, storage, filesHandler) {
     const handlers = {
         readStore(event, name) {
             return storage.get(name)
         },
         setStore(event, name, data) {
             storage.set(name, data)
-            fileHandler.watchDir()
+            filesHandler.watchDir()
         },
         async openExplorer() {
             const response = await electron.dialog.showOpenDialog({
@@ -17,10 +17,10 @@ module.exports = function (win, storage, fileHandler) {
             return response.canceled ? false : response.filePaths[0]
         },
         convertDir(event, targetDir) {
-            return fileHandler.convertDir.call(fileHandler, targetDir)
+            return filesHandler.convertDir.call(filesHandler, targetDir)
         },
         stopConvert() {
-            return fileHandler.stopConvert.call(fileHandler)
+            return filesHandler.stopConvert.call(filesHandler)
         },
     }
 

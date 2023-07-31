@@ -1,30 +1,18 @@
 <template>
     <div class="settings" :class="converting && 'disabled'">
-        <label class="settings__line settings__label"
-            >Directory: <strong>{{ dir }} </strong
-            ><button :class="explorerOpen && 'disabled'" @click="setWatchDir">Select directory</button></label
-        >
-        <label class="settings__line settings__label"
-            >Remove original PNG files: <input type="checkbox" checked v-model="remove" @change="setConfig"
-        /></label>
-        <span class="settings__line"
-            >Quality:
-            <input
-                ref="$quality"
-                type="range"
-                min="60"
-                max="100"
-                v-model="quality"
-                @change="setConfig"
-                @input="handleRange"
-            />
-            {{ quality }}</span
-        >
+        <label class="settings__line settings__label">Directory: <strong>{{ dir }} </strong><button
+                :class="explorerOpen && 'disabled'" @click="setWatchDir">Select directory</button></label>
+        <label class="settings__line settings__label">Remove original PNG files: <input type="checkbox" checked
+                v-model="remove" @change="setConfig" /></label>
+        <span class="settings__line">Quality:
+            <input ref="$quality" type="range" min="60" max="100" v-model="quality" @change="setConfig"
+                @input="handleRange" />
+            {{ quality }}</span>
         <div class="settings__line">
-            <button @click="() => convertDir()">Convert files in default directory</button>
+            <button @click="() => convertDir(dir)">Convert files in default directory</button>
             <button :class="explorerOpen && 'disabled'" @click="convertCustomDir">Convert files in custom directory</button>
         </div>
-        <VConvertList :convertStatus="convertStatus" :convertedFiles="convertedFiles"></VConvertList>
+        <VConvertList :convertStatus="convertStatus" :convertedFiles="convertedFiles" ref="$convertList"></VConvertList>
     </div>
     <div class="overlay" v-if="converting">
         <button class="overlay__button" @click="stopConvert">Stop</button>
@@ -40,8 +28,9 @@ import VConvertList from './components/VConvertList.vue'
 import { useConfig, useActions } from './logic/handler.js'
 
 const { dir, remove, quality, getConfig, setConfig } = useConfig()
-const { convertDir, converting, convertedFiles, convertStatus, workProgress } = useActions()
+const { convertDir, converting, convertedFiles, convertStatus, workProgress, $convertList } = useActions()
 const convertStatusAdditional = ref()
+const explorerOpen = ref(false)
 
 const $quality = ref()
 
@@ -75,16 +64,8 @@ function handleRange() {
     $quality.value.style.backgroundSize = ((val - min) * 100) / (max - min) + '% 100%'
 }
 
-const workProgressDefault = 'Converting'
 onMounted(() => {
     handleRange()
-    setInterval(() => {
-        if (workProgress.value === workProgressDefault + '...') {
-            workProgress.value = workProgressDefault
-        } else {
-            workProgress.value += '.'
-        }
-    }, 300)
 })
 </script>
 
@@ -97,6 +78,7 @@ onMounted(() => {
     overflow: auto;
     line-height: 2;
     height: 100%;
+
     &.disabled {
         * {
             pointer-events: none;
@@ -109,12 +91,15 @@ onMounted(() => {
     display: block;
     margin: 5px 0;
 }
+
 .settings__label {
     cursor: pointer;
+
     &:hover {
         color: rgb(182, 255, 171);
     }
 }
+
 .convert-list {
     display: grid;
     width: 100%;
@@ -127,6 +112,7 @@ onMounted(() => {
 .convert-list__status {
     font-size: 18px;
 }
+
 .convert-list__filename {
     width: 100%;
     color: var(--primary-color);
@@ -134,13 +120,16 @@ onMounted(() => {
     padding: 4px;
     font-size: 12px;
     line-height: 0.8;
+
     &.reading {
         color: orange;
     }
+
     &.converting {
         color: yellow;
     }
 }
+
 input[type='range'] {
     cursor: grab;
     -webkit-appearance: none;
@@ -151,9 +140,11 @@ input[type='range'] {
     background-image: linear-gradient(var(--primary-color), var(--primary-color));
     background-size: 100% 100%;
     background-repeat: no-repeat;
+
     &:active {
         cursor: grabbing;
     }
+
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
         margin-top: -2px;
@@ -163,14 +154,17 @@ input[type='range'] {
         box-shadow: 2px 0 4px rgba(black, 0.5);
         border-radius: 5px;
     }
+
     &::-webkit-slider-runnable-track {
         border: none;
         background: transparent;
     }
 }
+
 input[type='checkbox'] {
     cursor: pointer;
 }
+
 button {
     font-family: inherit;
     font-weight: bold;
@@ -182,16 +176,21 @@ button {
     margin: 10px;
     letter-spacing: 0.5px;
     font-size: 16px;
+
     &:first-child {
         margin-left: 0;
     }
+
     &:hover {
         background: var(--primary-color-l);
         box-shadow: -2px 0 8px rgba(black, 0.3);
     }
+
     &:active {
         background: var(--primary-color-d);
         box-shadow: 0px 0 5px rgba(black, 0.4);
+    }
+
     &.disabled {
         pointer-events: none;
     }
@@ -201,6 +200,7 @@ button {
     width: 6px;
     height: 6px;
 }
+
 *::-webkit-scrollbar-track {
     background: rgba(black, 0.2);
 }
@@ -210,6 +210,7 @@ button {
     border-radius: 20px;
     border: none;
 }
+
 .overlay {
     display: flex;
     flex-direction: column;
@@ -222,6 +223,7 @@ button {
     bottom: 0;
     background: rgba(black, 0.2);
 }
+
 .overlay__image {
     width: 100%;
     height: 100%;
@@ -231,10 +233,10 @@ button {
     opacity: 0.05;
     z-index: -1;
 }
+
 .overlay__text {
     text-align: left;
     font-weight: bold;
     width: 100px;
     white-space: nowrap;
-}
-</style>
+}</style>

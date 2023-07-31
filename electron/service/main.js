@@ -1,7 +1,7 @@
 const path = require('path')
 
 const addIpcHandlers = require('./handlers/ipc')
-const FileHandler = require('./handlers/FileHandler')
+const FilesHandler = require('./handlers/FilesHandler')
 
 const defaultConfig = {
     watchDir: path.resolve(__dirname),
@@ -15,13 +15,13 @@ function start(win, storage) {
         storage.set('config', defaultConfig)
     }
 
-    const fileHandler = new FileHandler(win, storage)
-    addIpcHandlers(win, storage, fileHandler)
-    fileHandler.watchDir()
+    const filesHandler = new FilesHandler(win, storage)
+    addIpcHandlers(win, storage, filesHandler)
+    filesHandler.watchDir()
 
     win.on('close', async function (e) {
         e.preventDefault()
-        await fileHandler.stopConvert()
+        await filesHandler.stopConvert()
         win.destroy()
     })
 }
