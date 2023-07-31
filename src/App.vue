@@ -2,7 +2,7 @@
     <div class="settings" :class="converting && 'disabled'">
         <label class="settings__line settings__label">Directory: <strong>{{ dir }} </strong><button
                 :class="explorerOpen && 'disabled'" @click="setWatchDir">Select directory</button></label>
-        <label class="settings__line settings__label">Remove original PNG files: <input type="checkbox" checked
+        <label class="settings__line settings__label">Trashbin original PNG files: <input type="checkbox" checked
                 v-model="remove" @change="setConfig" /></label>
         <span class="settings__line">Quality:
             <input ref="$quality" type="range" min="60" max="100" v-model="quality" @change="setConfig"
@@ -239,4 +239,5 @@ button {
     font-weight: bold;
     width: 100px;
     white-space: nowrap;
-}</style>
+}
+</style>
