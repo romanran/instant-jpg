@@ -1,12 +1,19 @@
 const jimp = require('jimp')
 const fs = require('fs-extra')
+const { exec } = require('child_process')
+
+
 function removeFile(filePath) {
-    fs.unlink(filePath, (err) => {
-        if (err) {
-            console.error(err)
-            return
+    const command = `powershell.exe -Command "Add-Type -AssemblyName Microsoft.VisualBasic;` +
+        `[Microsoft.VisualBasic.FileIO.FileSystem]::DeleteFile('${filePath}', 'AllDialogs', 'SendToRecycleBin', 'ThrowException')"`;
+
+    exec(command, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error: ${error.message}`);
+            return;
         }
-    })
+    });
+
 }
 
 module.exports = function convertImage(filePath, quality, removePng, id, suffix) {
