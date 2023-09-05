@@ -12,7 +12,7 @@ module.exports = class FilesHandler {
         this.converter
         this.config = this.storage.get('config')
     }
-    startConverter(files) {
+    startConverter(files, targetDir) {
         const config = this.storage.get('config')
 
         files = files.map(file => {
@@ -53,7 +53,7 @@ module.exports = class FilesHandler {
             if (error) {
                 console.error(error)
             }
-            this.startConverter(files)
+            this.startConverter(files, targetDir)
         })
     }
     async stopConvert() {

@@ -84,7 +84,6 @@ module.exports = () => {
             },
         ])
         const tray = new Tray(trayIcon)
-
         tray.setContextMenu(contextMenu)
         tray.setToolTip('Screenshot png -> jpg')
         tray.on('right-click', () => {
@@ -101,6 +100,7 @@ module.exports = () => {
         app.on('before-quit', function (evt) {
             tray.destroy();
         });
+
     })
     app.on('open-url', (event, url) => {
         dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`)
