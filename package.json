@@ -11,7 +11,7 @@
         "build": "npm run build:app && npm run build:electron",
         "build:app": "vite build",
         "build:electron": "webpack --mode=production --node-env=production",
-        "build:exe": "npm run build && electron-builder --win portable"
+        "build:exe": "cross-env NODE_ENV=production npm run build && electron-builder --win portable"
     },
     "license": "ISC",
     "devDependencies": {
@@ -19,6 +19,7 @@
         "@babel/core": "^7.18.10",
         "@vitejs/plugin-vue": "^3.0.3",
         "@webpack-cli/generators": "^2.5.0",
+        "cross-env": "^7.0.3",
         "electron": "^20.0.2",
         "electron-builder": "^23.3.3",
         "nodemon": "^2.0.19",
@@ -30,9 +31,7 @@
         "webpack-cli": "^4.10.0"
     },
     "dependencies": {
-        "chokidar": "^3.5.3",
         "electron-store": "^8.1.0",
-        "env-cmd": "^10.1.0",
         "fs-extra": "^10.1.0",
         "jimp": "^0.16.1",
         "lodash": "^4.17.21",
