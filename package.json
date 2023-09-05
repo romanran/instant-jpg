@@ -3,7 +3,6 @@
     "author": "Roman Ranniew",
     "version": "1.0.0",
     "description": "InstantJPG - directory watcher for converting PNG's to JPG's on the fly",
-    "main": "main.js",
     "scripts": {
         "start": "env-cmd vite",
         "watch": "nodemon -L --watch ./src/**/*.* --exec \"npm run build\" ",

@@ -6,7 +6,7 @@ const path = require('path')
 const start = require('./service/main')
 
 const indexHtmlPatch = path.resolve(path.join(__dirname, '../appDist/index.html'))
-const trayIcon = path.resolve(path.join(__dirname, '../appDist/favicon.ico'))
+const trayIcon = path.resolve(path.join(__dirname, '../build/favicon.ico'))
 
 const Store = require('electron-store')
 const storage = new Store()
@@ -17,8 +17,6 @@ module.exports = () => {
 
     async function createWindow() {
         const win = new BrowserWindow({
-            // width: 420,
-            // height: 420,
             frame: true,
             autoHideMenuBar: true,
             maximizable: true,
@@ -47,7 +45,7 @@ module.exports = () => {
 
     app.on('window-all-closed', () => {
         if (process.platform !== 'darwin') {
-            // app.quit()
+            app.quit()
         }
     })
 
@@ -89,10 +87,9 @@ module.exports = () => {
 
         tray.setContextMenu(contextMenu)
         tray.setToolTip('Screenshot png -> jpg')
-
-        // tray.on('right-click', () => {
-        //     tray.popUpContextMenu(contextMenu)
-        // })
+        tray.on('right-click', () => {
+            tray.popUpContextMenu(contextMenu)
+        })
         tray.on('double-click', () => {
             if (mainWindow.visible) {
                 mainWindow.hide()
@@ -101,11 +98,13 @@ module.exports = () => {
                 mainWindow.focus()
             }
         })
+        app.on('before-quit', function (evt) {
+            tray.destroy();
+        });
     })
     app.on('open-url', (event, url) => {
         dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`)
     })
-
     // if (isDevelopment) {
     //     if (process.platform === 'win32') {
     //         process.on('message', (data) => {

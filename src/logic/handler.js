@@ -55,7 +55,9 @@ export function useActions() {
         }, 300)
 
         window.api?.convertDir(targetDir)
-
+        // window.api?.receive('debug', (messages) => {
+        //     console.log(...messages)
+        // })
         window.api?.receive('convert-stream', (e) => {
             if (!converting.value) {
                 return

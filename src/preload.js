@@ -19,7 +19,7 @@ const apiFunctions = handlers.reduce((reducer, key) => {
 contextBridge.exposeInMainWorld('api', {
     ...apiFunctions,
     receive: (channel, listener) => {
-        let validChannels = ['convert-stream']
+        let validChannels = ['convert-stream', 'debug']
         if (validChannels.includes(channel)) {
             ipcRenderer.on(channel, (event, ...args) => {
                 listener(...args)
