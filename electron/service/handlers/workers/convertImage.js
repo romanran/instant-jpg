@@ -18,7 +18,6 @@ function removeFile(filePath) {
 
 module.exports = function convertImage(filePath, quality, removePng, id, suffix) {
     return new Promise((resolve, reject) => {
-
         async function onImageRead(err, image) {
             if (err) {
                 console.log('image read error', err)

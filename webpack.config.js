@@ -18,6 +18,9 @@ const config = {
         path: path.resolve(__dirname, './appDist'),
         clean: false,
     },
+    resolve: {
+        mainFields: ['module', 'main']
+    },
     // externals: { electron: 'require("electron")' },
     // plugins: [...optionalPlugins],
     mode: 'production',
