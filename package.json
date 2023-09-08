@@ -62,9 +62,6 @@
             "uninstallerIcon": "build/favicon.ico",
             "installerHeaderIcon": "build/favicon.ico",
             "deleteAppDataOnUninstall": true
-        },
-        "extraResources": [
-            ".env"
-        ]
+        }
     }
 }

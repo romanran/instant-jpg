@@ -4,8 +4,8 @@ const { app, protocol, BrowserWindow, Tray, Menu } = require('electron')
 const path = require('path')
 const start = require('./service/main')
 
-const indexHtmlPatch = path.resolve(path.join(__dirname, '../appDist/index.html'))
-const trayIcon = path.resolve(path.join(__dirname, 'build', 'favicon.ico'))
+const indexHtmlPatch = path.resolve(path.join(__dirname, '../distRender/index.html'))
+const trayIcon = path.resolve(path.join(__dirname, '../', 'build', 'favicon.ico'))
 
 const Store = require('electron-store')
 const storage = new Store()
@@ -19,13 +19,13 @@ module.exports = () => {
             autoHideMenuBar: true,
             maximizable: true,
             fullscreenable: false,
-            show: false,
+            show: true,
             webPreferences: {
                 devTools: !app.isPackaged,
                 nodeIntegration: false,
                 nodeIntegrationInWorker: true,
                 contextIsolation: true,
-                preload: path.join(__dirname, '../appDist/preload.js'),
+                preload: path.join(__dirname, '../distRender/preload.js'),
                 sandbox: false,
             },
         })
@@ -46,16 +46,10 @@ module.exports = () => {
     if (!gotTheLock) {
         app.quit()
     } else {
-        app.on('second-instance', (event, commandLine, workingDirectory) => {
-            if (myWindow) {
-                if (myWindow.isMinimized()) myWindow.restore()
-                myWindow.focus()
-            }
-        })
         app.on('ready', async () => {
             protocol.registerFileProtocol('serve', (request, cb) => {
                 const url = request.url.replace('serve://', '')
-                const decodedUrl = path.resolve(path.join(__dirname, '../appDist/', decodeURI(url)))
+                const decodedUrl = path.resolve(path.join(__dirname, '../distRender/', decodeURI(url)))
                 try {
                     return cb(decodedUrl)
                 } catch (error) {
@@ -82,6 +76,14 @@ module.exports = () => {
                     },
                 },
             ])
+
+            app.on('second-instance', (event, commandLine, workingDirectory) => {
+                if (mainWindow) {
+                    if (mainWindow.isMinimized()) mainWindow.restore()
+                    mainWindow.focus()
+                }
+            })
+
             const tray = new Tray(trayIcon)
             tray.setContextMenu(contextMenu)
             tray.setToolTip('Screenshot png -> jpg')

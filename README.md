@@ -7,11 +7,11 @@ For the frontend part of the app `npm run watch` and CTRL+R inside app's window 
 
 ## Build
 #### Vue app
-`/src/` build with `build:app` using vite. Output dir `/appDist/`
+`/src/` build with `build:app` using vite. Output dir `/distRender/`
 #### Electron renderer
-`/src/preload.js` build with `build:electron` using webpack. Output dir `/appDist/preload.js`
+`/src/preload.js` build with `build:electron` using webpack. Output dir `/distRender/preload.js`
 #### Electron background
-`/index.js` build with `build:electron` using webpack. Output dir `/appDist/preload.js`
+`/index.js` build with `build:electron` using webpack. Output dir `/distRender/preload.js`
 
 #### Windows executable
 `build:exe` using electron-builder -> dist
