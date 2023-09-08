@@ -5,6 +5,7 @@ const config = {
     build: {
         outDir: './distRender',
     },
+    publicDir: 'src/public',
     plugins: [vue()],
 }
 config.emptyOutDir = false

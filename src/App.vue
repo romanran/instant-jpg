@@ -4,10 +4,12 @@
                 :class="explorerOpen && 'disabled'" @click="setWatchDir">Select directory</button></label>
         <label class="settings__line settings__label">Trashbin original PNG files: <input type="checkbox" checked
                 v-model="remove" @change="setConfig" /></label>
-        <span class="settings__line">Quality:
-            <input ref="$quality" type="range" min="60" max="100" v-model="quality" @change="setConfig"
-                @input="handleRange" />
-            {{ quality }}</span>
+        <div class="settings__line">Quality:
+            <input ref="$quality" type="range" :min="qualityRange.min" :max="qualityRange.max" v-model="quality"
+                @change="setConfig" @input="handleRange" />
+            <span>{{ quality }}</span>
+            <VQualityPreview :quality="quality" :quality-range="qualityRange" :images="previews"></VQualityPreview>
+        </div>
         <div class="settings__line">
             <button @click="() => convertDir(dir)">Convert files in default directory</button>
             <button :class="explorerOpen && 'disabled'" @click="convertCustomDir">Convert files in custom directory</button>
@@ -25,15 +27,18 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import VConvertList from './components/VConvertList.vue'
-import { useConfig, useActions } from './logic/handler.js'
+import VQualityPreview from './components/ui/VQualityPreview.vue'
+import { useConfig, useActions, usePreviews } from './logic/handler.js'
 
 const { dir, remove, quality, getConfig, setConfig } = useConfig()
 const { convertDir, converting, convertedFiles, convertStatus, workProgress, $convertList } = useActions()
+const { previews } = usePreviews()
 const convertStatusAdditional = ref()
 const explorerOpen = ref(false)
 const $quality = ref()
-
+const qualityRange = { min: 60, max: 100 }
 initWin()
+
 async function initWin() {
     await getConfig()
     handleRange()
@@ -194,7 +199,7 @@ button {
         box-shadow: 0px 0 5px rgba(black, 0.4);
     }
 
-    <<<<<<< HEAD=======>>>>>>>main &.disabled {
+    main &.disabled {
         pointer-events: none;
     }
 }

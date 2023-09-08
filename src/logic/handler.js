@@ -1,6 +1,17 @@
 import { ref } from 'vue'
 
-const workProgressDefault = 'Converting'
+export function usePreviews() {
+    const previews = []
+    const noOfPreviews = 4
+    for (let qualityIndex = 60; qualityIndex <= 100; qualityIndex++) {
+        for (let previewIndex = 1; previewIndex <= noOfPreviews; previewIndex++) {
+            previews.push(`serve://assets/previews/${previewIndex}-quality${qualityIndex}.jpg`)
+        }
+    }
+    return {
+        previews
+    }
+}
 
 export function useConfig() {
     const dir = ref('')
