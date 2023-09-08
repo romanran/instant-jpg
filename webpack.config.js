@@ -15,8 +15,11 @@ const config = {
     },
     output: {
         filename: '[name].js',
-        path: path.resolve(__dirname, './appDist'),
+        path: path.resolve(__dirname, './distRender'),
         clean: false,
+    },
+    resolve: {
+        mainFields: ['module', 'main']
     },
     // externals: { electron: 'require("electron")' },
     // plugins: [...optionalPlugins],

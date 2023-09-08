@@ -1,17 +1,24 @@
 const jimp = require('jimp')
 const fs = require('fs-extra')
+const { exec } = require('child_process')
+
+
 function removeFile(filePath) {
-    fs.unlink(filePath, (err) => {
-        if (err) {
-            console.error(err)
-            return
+    const command = `powershell.exe -Command "Add-Type -AssemblyName Microsoft.VisualBasic;` +
+        `[Microsoft.VisualBasic.FileIO.FileSystem]::DeleteFile('${filePath}', 'AllDialogs', 'SendToRecycleBin', 'ThrowException')"`;
+
+    exec(command, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error: ${error.message}`);
+            return;
         }
-    })
+    });
+
 }
 
 module.exports = function convertImage(filePath, quality, removePng, id, suffix) {
     return new Promise((resolve, reject) => {
-        const onImageRead = async (err, image) => {
+        async function onImageRead(err, image) {
             if (err) {
                 console.log('image read error', err)
                 return reject(err)
@@ -25,13 +32,14 @@ module.exports = function convertImage(filePath, quality, removePng, id, suffix)
                 }
 
                 if (removePng) {
-                    id && this.workerEmit({ path: filePath, id, end: false, status: 'removeOriginal' })
                     removeFile(filePath)
+                    id && this.workerEmit({ path: filePath, id, end: false, status: 'removeOriginal' })
                 }
                 resolve({ path: newFilePath, id, status: 'done' })
             })
         }
+
         id && this.workerEmit({ path: filePath, id, end: false, status: 'reading' })
-        jimp.read(filePath, onImageRead)
+        jimp.read(filePath, onImageRead.bind(this))
     })
 }

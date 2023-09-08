@@ -1,15 +1,28 @@
 const chokidar = require('chokidar')
-const readdirp = require('readdirp')
 const Converter = require('./Converter')
 const path = require('path')
+const fs = require('fs-extra')
 
-module.exports = class FileHandler {
+
+module.exports = class FilesHandler {
     constructor(win, storage) {
         this.storage = storage
         this.win = win
         this.watcher
         this.converter
         this.config = this.storage.get('config')
+    }
+    startConverter(files, targetDir) {
+        const config = this.storage.get('config')
+
+        files = files.map(file => {
+            if (path.extname(file) == ".png") {
+                return `${targetDir}/${file}`
+            }
+        }).filter(file => file)
+
+        this.converter = new Converter(files, config, this.win)
+        this.converter.start()
     }
 
     watchDir() {
@@ -30,27 +43,18 @@ module.exports = class FileHandler {
                 converter.start()
             }
         })
+        return 'watching'
     }
     stopWatch() {
         this.watcher?.close()
     }
     convertDir(targetDir) {
-        const config = this.storage.get('config')
-        const files = []
-        readdirp(targetDir, { fileFilter: '*.png' })
-            .on('data', (entry) => {
-                files.push(entry.fullPath)
-            })
-            .on('warn', (error) => {
-                console.error('non-fatal error', error)
-            })
-            .on('error', (error) => {
-                console.error('fatal error', error)
-            })
-            .on('end', () => {
-                this.converter = new Converter(files, config, this.win)
-                this.converter.start()
-            })
+        fs.readdir(targetDir, (error, files) => {
+            if (error) {
+                console.error(error)
+            }
+            this.startConverter(files, targetDir)
+        })
     }
     async stopConvert() {
         return await this.converter?.stop()

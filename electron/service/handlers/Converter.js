@@ -1,5 +1,6 @@
 const workerpool = require('workerpool')
 const _ = require('lodash')
+const path = require('path')
 
 function hashCode(string) {
     let hash = 0,
@@ -21,7 +22,7 @@ module.exports = class Converter {
         this.win = win
         this.stopping = false
         this.win.webContents.send('convert-stream', { filesNumber: files.length, end: false })
-        this.pool = workerpool.pool('./electron/service/handlers/workerPool.js', {
+        this.pool = workerpool.pool(path.join(__dirname, '/workers/workerPool.js'), {
             workerTerminateTimeout: 5000,
             maxWorkers: workerpool.cpus - 2,
         })
@@ -34,6 +35,7 @@ module.exports = class Converter {
         try {
             await Promise.all(tasks)
         } catch (err) {
+            console.error(err)
             // was terminated
         }
         !this.stopping && this.win?.webContents.send('convert-stream', { end: true })

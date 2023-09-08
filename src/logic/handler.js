@@ -1,4 +1,7 @@
 import { ref } from 'vue'
+
+const workProgressDefault = 'Converting'
+
 export function useConfig() {
     const dir = ref('')
     const remove = ref(true)
@@ -36,17 +39,26 @@ export function useActions() {
     const converting = ref(false)
     const convertStatus = ref()
     const workProgress = ref('')
+    const $convertList = ref(null)
 
-    function convertDir(targetDir = dir.value) {
-        // targetDir || (targetDir = dir.value)
-
+    function convertDir(targetDir) {
         let fileIndex = 0
         convertedFiles.value = {}
         converting.value = true
         convertStatus.value = null
         workProgress.value = workProgressDefault
+        const progressInterval = setInterval(() => {
+            if (workProgress.value === workProgressDefault + '...') {
+                workProgress.value = workProgressDefault
+            } else {
+                workProgress.value += '.'
+            }
+        }, 300)
 
         window.api?.convertDir(targetDir)
+        // window.api?.receive('debug', (messages) => {
+        //     console.log(...messages)
+        // })
         window.api?.receive('convert-stream', (e) => {
             if (!converting.value) {
                 return
@@ -58,6 +70,7 @@ export function useActions() {
             if (e.id) {
                 if (!convertedFiles.value[e.id]) {
                     e.order = fileIndex++
+                    $convertList.value.onEvent()
                 }
                 e.path = e.path.replace(targetDir, '')
                 convertedFiles.value[e.id] = { ...convertedFiles.value[e.id], ...e }
@@ -65,9 +78,12 @@ export function useActions() {
             if (e.end) {
                 converting.value = false
                 convertStatus.value = `Done! <strong>${Object.keys(convertedFiles.value).length} files</strong> converted`
+                clearInterval(progressInterval)
             }
         })
     }
+
+
     return {
         convertDir,
         converting,

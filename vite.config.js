@@ -3,11 +3,10 @@ import vue from '@vitejs/plugin-vue'
 
 const config = {
     build: {
-        outDir: './appDist',
+        outDir: './distRender',
     },
     plugins: [vue()],
 }
-// if (process.env.NODE_ENV !== 'production') {
 config.emptyOutDir = false
 config.rollupOptions = {
     output: {

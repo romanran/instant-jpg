@@ -6,6 +6,6 @@ dist/
 cache/
 testFolder/
 
-appDist/
+distRender/
 
 utils/testImages/*.jpg
