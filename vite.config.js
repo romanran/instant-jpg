@@ -7,7 +7,6 @@ const config = {
     },
     plugins: [vue()],
 }
-// if (process.env.NODE_ENV !== 'production') {
 config.emptyOutDir = false
 config.rollupOptions = {
     output: {
@@ -18,12 +17,12 @@ config.rollupOptions = {
 }
 // }
 
-if (process.env.WEB !== 'true') {
-    config.experimental = {
-        renderBuiltUrl(filename) {
-            return 'serve://' + filename
-        },
-    }
-}
+// if (process.env.WEB !== 'true') {
+//     config.experimental = {
+//         renderBuiltUrl(filename) {
+//             return 'serve://' + filename
+//         },
+//     }
+// }
 
 export default defineConfig(config)
