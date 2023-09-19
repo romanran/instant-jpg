@@ -2,14 +2,15 @@ import { ref } from 'vue'
 
 export function usePreviews() {
     const previews = []
-    const noOfPreviews = 4
-    for (let qualityIndex = 60; qualityIndex <= 100; qualityIndex++) {
-        for (let previewIndex = 1; previewIndex <= noOfPreviews; previewIndex++) {
+    const numberOfTypes = 4
+    for (let previewIndex = 1; previewIndex <= numberOfTypes; previewIndex++) {
+        for (let qualityIndex = 60; qualityIndex <= 100; qualityIndex++) {
             previews.push(`serve://assets/previews/${previewIndex}-quality${qualityIndex}.jpg`)
         }
     }
     return {
-        previews
+        previews,
+        numberOfTypes
     }
 }
 

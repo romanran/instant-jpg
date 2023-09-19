@@ -5,10 +5,11 @@
         <label class="settings__line settings__label">Trashbin original PNG files: <input type="checkbox" checked
                 v-model="remove" @change="setConfig" /></label>
         <div class="settings__line">Quality:
-            <input ref="$quality" type="range" :min="qualityRange.min" :max="qualityRange.max" v-model="quality"
+            <input ref="$quality" type="range" :min="qualityRange.min" :max="qualityRange.max" v-model.number="quality"
                 @change="setConfig" @input="handleRange" />
             <span>{{ quality }}</span>
-            <VQualityPreview :quality="quality" :quality-range="qualityRange" :images="previews"></VQualityPreview>
+            <VQualityPreview :quality="quality" :quality-range="qualityRange" :images="previews"
+                :number-of-types="numberOfTypes"></VQualityPreview>
         </div>
         <div class="settings__line">
             <button @click="() => convertDir(dir)">Convert files in default directory</button>
@@ -32,7 +33,7 @@ import { useConfig, useActions, usePreviews } from './logic/handler.js'
 
 const { dir, remove, quality, getConfig, setConfig } = useConfig()
 const { convertDir, converting, convertedFiles, convertStatus, workProgress, $convertList } = useActions()
-const { previews } = usePreviews()
+const { previews, numberOfTypes } = usePreviews()
 const convertStatusAdditional = ref()
 const explorerOpen = ref(false)
 const $quality = ref()
