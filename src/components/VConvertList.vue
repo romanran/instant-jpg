@@ -20,7 +20,6 @@ defineProps({
 })
 defineExpose({
     onEvent() {
-        console.log('aaaaa', $convertList.value.scrollHeight);
         $convertList.value.scrollTo({ left: 0, top: $convertList.value.scrollHeight + 20 })
     }
 })

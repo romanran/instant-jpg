@@ -6,7 +6,7 @@
                 v-model="remove" @change="setConfig" /></label>
         <div class="settings__line">Quality:
             <input ref="$quality" type="range" :min="qualityRange.min" :max="qualityRange.max" v-model.number="quality"
-                @change="setConfig" @input="handleRange" />
+                @change="setConfig" @input="handleRangeSlider" />
             <span>{{ quality }}</span>
             <VQualityPreview :quality="quality" :quality-range="qualityRange" :images="previews"
                 :number-of-types="numberOfTypes"></VQualityPreview>
@@ -83,10 +83,12 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 10px 20px;
-    overflow: auto;
-    line-height: 2;
     height: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 10px 20px;
+    line-height: 2;
+    overflow: auto;
 
     &.disabled {
         * {

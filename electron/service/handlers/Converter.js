@@ -21,7 +21,7 @@ module.exports = class Converter {
         this.options = options
         this.win = win
         this.stopping = false
-        this.win.webContents.send('convert-stream', { filesNumber: files.length, end: false })
+        this.win?.webContents.send('convert-stream', { filesNumber: files.length, end: false })
         this.pool = workerpool.pool(path.join(__dirname, '/workers/workerPool.js'), {
             workerTerminateTimeout: 5000,
             maxWorkers: workerpool.cpus - 2,
@@ -44,28 +44,28 @@ module.exports = class Converter {
         this.stopping = true
         await this.pool.terminate()
         try {
-            this.win.webContents.send('convert-stream', { end: true })
+            this.win?.webContents.send('convert-stream', { end: true })
         } catch (err) {
             return err
             // app quit
         }
         return true
     }
-    processFile(file) {
+    processFile(file, quality = this.options.quality) {
         return new Promise((resolve, reject) => {
             const id = hashCode(file)
             this.pool
-                .exec('convertImage', [file, this.options.quality, this.options.removePng, id], {
+                .exec('convertImage', [file, quality, this.options.removePng, id], {
                     on: (payload) => {
                         try {
-                            this.win.webContents.send('convert-stream', { ...payload, end: false })
+                            this.win?.webContents.send('convert-stream', { ...payload, end: false })
                         } catch (err) {
                             //  app quit
                         }
                     },
                 })
                 .then((result) => {
-                    this.win.webContents.send('convert-stream', { ...result, end: false })
+                    this.win?.webContents.send('convert-stream', { ...result, end: false })
                     resolve(result)
                 })
                 .catch((error) => {

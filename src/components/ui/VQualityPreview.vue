@@ -43,9 +43,9 @@ onMounted(preloadImage)
 <style lang="scss">
 .v-preview__image {
     position: relative;
-    height: 400px;
     resize: vertical;
     overflow: auto;
+    max-height: 600px;
     aspect-ratio: 1 / 1;
 }
 
@@ -65,5 +65,6 @@ onMounted(preloadImage)
     background-size: 1000%;
     background-position: center;
     border-radius: 50%;
+    border: 2px solid var(--primary-color);
 }
 </style>
