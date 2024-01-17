@@ -1,22 +1,41 @@
 <template>
     <div class="settings" :class="converting && 'disabled'">
-        <label class="settings__line settings__label">Directory: <strong>{{ dir }} </strong><button
-                :class="explorerOpen && 'disabled'" @click="setWatchDir">Select directory</button></label>
-        <label class="settings__line settings__label">Trashbin original PNG files: <input type="checkbox" checked
-                v-model="remove" @change="setConfig" /></label>
-        <div class="settings__line">Quality:
+        <!-- Directory select -->
+        <label class="settings__line settings__label">
+            <FolderEditOutlineIcon class="settings__icon" />
+            <span>Directory: <strong>{{ dir }} </strong></span>
+            <button :class="explorerOpen && 'disabled'" @click="setWatchDir">Select directory</button>
+        </label>
+
+        <!-- Trashbin -->
+        <label class="settings__line settings__label">
+            <TrashCanOutlineIcon class="settings__icon" />
+            <span>Trashbin original PNG files&nbsp;&nbsp;</span>
+            <input class="settings__checkbox" type="checkbox" checked v-model="remove" @change="setConfig" />
+            <CheckboxMarkedIcon class="settings__icon" :size="18" v-show="remove" />
+            <CheckboxBlankOutlineIcon class="settings__icon" :size="18" v-show="!remove" />
+        </label>
+
+        <!-- Quality -->
+        <div class="settings__line">
+            <TuneIcon class="settings__icon" />
+            <span>Quality</span>
             <input ref="$quality" type="range" :min="qualityRange.min" :max="qualityRange.max" v-model.number="quality"
                 @change="setConfig" @input="handleRangeSlider" />
             <span>{{ quality }}</span>
+
             <VQualityPreview :quality="quality" :quality-range="qualityRange" :images="previews"
                 :number-of-types="numberOfTypes"></VQualityPreview>
         </div>
+
+        <!-- Convert buttons -->
         <div class="settings__line">
             <button @click="() => convertDir(dir)">Convert files in default directory</button>
             <button :class="explorerOpen && 'disabled'" @click="convertCustomDir">Convert files in custom directory</button>
         </div>
         <VConvertList :convertStatus="convertStatus" :convertedFiles="convertedFiles" ref="$listComponent"></VConvertList>
     </div>
+
     <div class="overlay" v-if="converting">
         <button class="overlay__button" @click="stopConvert">Stop</button>
         <div class="overlay__image"></div>
@@ -30,6 +49,11 @@ import { onMounted, ref } from 'vue'
 import VConvertList from './components/VConvertList.vue'
 import VQualityPreview from './components/ui/VQualityPreview.vue'
 import { useConfig, useActions, usePreviews } from './logic/handler.js'
+import TuneIcon from 'vue-material-design-icons/Tune.vue';
+import TrashCanOutlineIcon from 'vue-material-design-icons/TrashCanOutline.vue';
+import FolderEditOutlineIcon from 'vue-material-design-icons/FolderEditOutline.vue';
+import CheckboxBlankOutlineIcon from 'vue-material-design-icons/CheckboxBlankOutline.vue';
+import CheckboxMarkedIcon from 'vue-material-design-icons/CheckboxMarked.vue';
 
 const { dir, remove, quality, getConfig, setConfig } = useConfig()
 const { convertDir, converting, convertedFiles, convertStatus, workProgress, $listComponent } = useActions()
@@ -98,6 +122,12 @@ onMounted(() => {
     }
 }
 
+.settings__icon {
+    vertical-align: middle;
+    margin-right: 10px;
+    font-size: 0;
+}
+
 .settings__line {
     display: block;
     margin: 5px 0;
@@ -112,6 +142,9 @@ onMounted(() => {
 }
 
 
+input[type="checkbox"] {
+    display: none;
+}
 
 input[type='range'] {
     cursor: grab;
@@ -144,9 +177,6 @@ input[type='range'] {
     }
 }
 
-input[type='checkbox'] {
-    cursor: pointer;
-}
 
 button {
     font-family: inherit;
