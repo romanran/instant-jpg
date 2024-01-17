@@ -15,7 +15,7 @@
             <button @click="() => convertDir(dir)">Convert files in default directory</button>
             <button :class="explorerOpen && 'disabled'" @click="convertCustomDir">Convert files in custom directory</button>
         </div>
-        <VConvertList :convertStatus="convertStatus" :convertedFiles="convertedFiles" ref="$convertList"></VConvertList>
+        <VConvertList :convertStatus="convertStatus" :convertedFiles="convertedFiles" ref="$listComponent"></VConvertList>
     </div>
     <div class="overlay" v-if="converting">
         <button class="overlay__button" @click="stopConvert">Stop</button>
@@ -32,7 +32,7 @@ import VQualityPreview from './components/ui/VQualityPreview.vue'
 import { useConfig, useActions, usePreviews } from './logic/handler.js'
 
 const { dir, remove, quality, getConfig, setConfig } = useConfig()
-const { convertDir, converting, convertedFiles, convertStatus, workProgress, $convertList } = useActions()
+const { convertDir, converting, convertedFiles, convertStatus, workProgress, $listComponent } = useActions()
 const { previews, numberOfTypes } = usePreviews()
 const convertStatusAdditional = ref()
 const explorerOpen = ref(false)
@@ -42,7 +42,7 @@ initWin()
 
 async function initWin() {
     await getConfig()
-    handleRange()
+    handleRangeSlider()
 }
 
 async function setWatchDir() {
@@ -66,7 +66,7 @@ function stopConvert() {
     window.api?.stopConvert()
 }
 
-function handleRange() {
+function handleRangeSlider() {
     const min = $quality.value.min
     const max = $quality.value.max
     const val = $quality.value.value
@@ -74,7 +74,7 @@ function handleRange() {
 }
 
 onMounted(() => {
-    handleRange()
+    handleRangeSlider()
 })
 </script>
 
@@ -109,35 +109,7 @@ onMounted(() => {
     }
 }
 
-.convert-list {
-    display: grid;
-    width: 100%;
-    flex: 0 1 auto;
-    overflow: auto;
-    min-height: 80px;
-    border: 1px solid var(--primary-color-l);
-}
 
-.convert-list__status {
-    font-size: 18px;
-}
-
-.convert-list__filename {
-    width: 100%;
-    color: var(--primary-color);
-    margin: 0px;
-    padding: 4px;
-    font-size: 12px;
-    line-height: 0.8;
-
-    &.reading {
-        color: orange;
-    }
-
-    &.converting {
-        color: yellow;
-    }
-}
 
 input[type='range'] {
     cursor: grab;
@@ -145,7 +117,7 @@ input[type='range'] {
     margin: 5px 10px;
     background: rgba(255, 255, 255, 0.6);
     border-radius: 5px;
-    height: 4px;
+    height: 3.5px;
     background-image: linear-gradient(var(--primary-color), var(--primary-color));
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -156,7 +128,7 @@ input[type='range'] {
 
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
-        margin-top: -2px;
+        margin-top: -1.5px;
         width: 10px;
         height: 10px;
         background: var(--primary-color);
@@ -185,6 +157,7 @@ button {
     margin: 10px;
     letter-spacing: 0.5px;
     font-size: 16px;
+    user-select: none;
 
     &:first-child {
         margin-left: 0;

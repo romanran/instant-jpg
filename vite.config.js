@@ -16,14 +16,11 @@ config.rollupOptions = {
         assetFileNames: '[name].[ext]', // Preserve original file names without hashing
     },
 }
-// }
 
-if (process.env.WEB !== 'true') {
-    config.experimental = {
-        renderBuiltUrl(filename) {
-            return 'serve://' + filename
-        },
-    }
+config.experimental = {
+    renderBuiltUrl(filename) {
+        return 'serve://' + filename
+    },
 }
 
 export default defineConfig(config)

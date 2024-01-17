@@ -20,9 +20,45 @@ defineProps({
 })
 defineExpose({
     onEvent() {
+        console.log('aaaaa', $convertList.value.scrollHeight);
         $convertList.value.scrollTo({ left: 0, top: $convertList.value.scrollHeight + 20 })
     }
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.convert-list {
+    display: grid;
+    width: 100%;
+    padding: 10px;
+    flex: 0 1 auto;
+    overflow: auto;
+    min-height: 120px;
+    border: 1px solid var(--primary-color-l);
+}
+
+.convert-list__status {
+    font-size: 18px;
+}
+
+.convert-list__filename {
+    width: 100%;
+    color: var(--primary-color);
+    margin: 0px;
+    padding: 4px;
+    font-size: 12px;
+    line-height: 0.8;
+
+    &.reading {
+        color: orange;
+    }
+
+    &.converting {
+        color: yellow;
+    }
+}
+
+.convert-list__list {
+    overflow: auto
+}
+</style>

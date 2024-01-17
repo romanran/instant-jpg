@@ -22,7 +22,7 @@ module.exports = () => {
             webPreferences: {
                 devTools: !app.isPackaged,
                 nodeIntegration: false,
-                nodeIntegrationInWorker: true,
+                nodeIntegrationInWorker: false,
                 contextIsolation: true,
                 preload: path.join(__dirname, '../distRender/preload.js'),
                 sandbox: false,
