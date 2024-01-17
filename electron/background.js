@@ -9,7 +9,6 @@ const trayIcon = path.resolve(path.join(__dirname, '../', 'build', 'favicon.ico'
 
 const Store = require('electron-store')
 const storage = new Store()
-const config = storage.get('config')
 
 module.exports = () => {
     protocol.registerSchemesAsPrivileged([{ scheme: 'serve://', privileges: { secure: true, standard: true } }])
@@ -23,7 +22,7 @@ module.exports = () => {
             webPreferences: {
                 devTools: !app.isPackaged,
                 nodeIntegration: false,
-                nodeIntegrationInWorker: true,
+                nodeIntegrationInWorker: false,
                 contextIsolation: true,
                 preload: path.join(__dirname, '../distRender/preload.js'),
                 sandbox: false,
@@ -33,7 +32,6 @@ module.exports = () => {
 
         await win.loadURL(indexHtmlPatch)
         !app.isPackaged && win.webContents.openDevTools({ mode: 'undocked' })
-
         win.on('minimize', function (event) {
             event.preventDefault()
             win.hide()

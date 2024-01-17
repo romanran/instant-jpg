@@ -4,15 +4,18 @@
                 :class="explorerOpen && 'disabled'" @click="setWatchDir">Select directory</button></label>
         <label class="settings__line settings__label">Trashbin original PNG files: <input type="checkbox" checked
                 v-model="remove" @change="setConfig" /></label>
-        <span class="settings__line">Quality:
-            <input ref="$quality" type="range" min="60" max="100" v-model="quality" @change="setConfig"
-                @input="handleRange" />
-            {{ quality }}</span>
+        <div class="settings__line">Quality:
+            <input ref="$quality" type="range" :min="qualityRange.min" :max="qualityRange.max" v-model.number="quality"
+                @change="setConfig" @input="handleRange" />
+            <span>{{ quality }}</span>
+            <VQualityPreview :quality="quality" :quality-range="qualityRange" :images="previews"
+                :number-of-types="numberOfTypes"></VQualityPreview>
+        </div>
         <div class="settings__line">
             <button @click="() => convertDir(dir)">Convert files in default directory</button>
             <button :class="explorerOpen && 'disabled'" @click="convertCustomDir">Convert files in custom directory</button>
         </div>
-        <VConvertList :convertStatus="convertStatus" :convertedFiles="convertedFiles" ref="$convertList"></VConvertList>
+        <VConvertList :convertStatus="convertStatus" :convertedFiles="convertedFiles" ref="$listComponent"></VConvertList>
     </div>
     <div class="overlay" v-if="converting">
         <button class="overlay__button" @click="stopConvert">Stop</button>
@@ -25,14 +28,22 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import VConvertList from './components/VConvertList.vue'
-import { useConfig, useActions } from './logic/handler.js'
+import VQualityPreview from './components/ui/VQualityPreview.vue'
+import { useConfig, useActions, usePreviews } from './logic/handler.js'
 
 const { dir, remove, quality, getConfig, setConfig } = useConfig()
-const { convertDir, converting, convertedFiles, convertStatus, workProgress, $convertList } = useActions()
+const { convertDir, converting, convertedFiles, convertStatus, workProgress, $listComponent } = useActions()
+const { previews, numberOfTypes } = usePreviews()
 const convertStatusAdditional = ref()
 const explorerOpen = ref(false)
-
 const $quality = ref()
+const qualityRange = { min: 60, max: 100 }
+initWin()
+
+async function initWin() {
+    await getConfig()
+    handleRangeSlider()
+}
 
 async function setWatchDir() {
     explorerOpen.value = true
@@ -43,8 +54,6 @@ async function setWatchDir() {
         setConfig()
     }
 }
-
-getConfig()
 
 async function convertCustomDir() {
     explorerOpen.value = true
@@ -57,7 +66,7 @@ function stopConvert() {
     window.api?.stopConvert()
 }
 
-function handleRange() {
+function handleRangeSlider() {
     const min = $quality.value.min
     const max = $quality.value.max
     const val = $quality.value.value
@@ -65,7 +74,7 @@ function handleRange() {
 }
 
 onMounted(() => {
-    handleRange()
+    handleRangeSlider()
 })
 </script>
 
@@ -100,35 +109,7 @@ onMounted(() => {
     }
 }
 
-.convert-list {
-    display: grid;
-    width: 100%;
-    flex: 0 1 auto;
-    overflow: auto;
-    min-height: 80px;
-    border: 1px solid var(--primary-color-l);
-}
 
-.convert-list__status {
-    font-size: 18px;
-}
-
-.convert-list__filename {
-    width: 100%;
-    color: var(--primary-color);
-    margin: 0px;
-    padding: 4px;
-    font-size: 12px;
-    line-height: 0.8;
-
-    &.reading {
-        color: orange;
-    }
-
-    &.converting {
-        color: yellow;
-    }
-}
 
 input[type='range'] {
     cursor: grab;
@@ -136,7 +117,7 @@ input[type='range'] {
     margin: 5px 10px;
     background: rgba(255, 255, 255, 0.6);
     border-radius: 5px;
-    height: 4px;
+    height: 3.5px;
     background-image: linear-gradient(var(--primary-color), var(--primary-color));
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -147,7 +128,7 @@ input[type='range'] {
 
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
-        margin-top: -2px;
+        margin-top: -1.5px;
         width: 10px;
         height: 10px;
         background: var(--primary-color);
@@ -176,6 +157,7 @@ button {
     margin: 10px;
     letter-spacing: 0.5px;
     font-size: 16px;
+    user-select: none;
 
     &:first-child {
         margin-left: 0;
@@ -191,7 +173,7 @@ button {
         box-shadow: 0px 0 5px rgba(black, 0.4);
     }
 
-    &.disabled {
+    main &.disabled {
         pointer-events: none;
     }
 }

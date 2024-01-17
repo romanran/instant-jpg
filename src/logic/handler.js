@@ -1,6 +1,18 @@
 import { ref } from 'vue'
 
-const workProgressDefault = 'Converting'
+export function usePreviews() {
+    const previews = []
+    const numberOfTypes = 4
+    for (let previewIndex = 1; previewIndex <= numberOfTypes; previewIndex++) {
+        for (let qualityIndex = 60; qualityIndex <= 100; qualityIndex++) {
+            previews.push(`assets/previews/${previewIndex}-quality${qualityIndex}.jpg`)
+        }
+    }
+    return {
+        previews,
+        numberOfTypes
+    }
+}
 
 export function useConfig() {
     const dir = ref('')
@@ -34,11 +46,12 @@ export function useConfig() {
 }
 
 export function useActions() {
+    const workProgressDefault = 'Converting'
     const convertedFiles = ref({})
     const converting = ref(false)
     const convertStatus = ref()
     const workProgress = ref('')
-    const $convertList = ref(null)
+    const $listComponent = ref(null)
 
     function convertDir(targetDir) {
         let fileIndex = 0
@@ -69,7 +82,7 @@ export function useActions() {
             if (e.id) {
                 if (!convertedFiles.value[e.id]) {
                     e.order = fileIndex++
-                    $convertList.value.onEvent()
+                    $listComponent.value?.onEvent()
                 }
                 e.path = e.path.replace(targetDir, '')
                 convertedFiles.value[e.id] = { ...convertedFiles.value[e.id], ...e }
@@ -89,6 +102,7 @@ export function useActions() {
         convertedFiles,
         convertStatus,
         workProgress,
-        $convertList,
+        workProgressDefault,
+        $listComponent
     }
 }
