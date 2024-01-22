@@ -1,4 +1,5 @@
-import { ref } from 'vue'
+import _ from 'lodash'
+import { computed, ref } from 'vue'
 
 export function usePreviews() {
     const previews = []
@@ -17,13 +18,29 @@ export function usePreviews() {
 export function useConfig() {
     const dir = ref('')
     const remove = ref(true)
-    const quality = ref(90)
+    const qualityRange = { min: 60, max: 100 }
+    const qualityVal = ref(0)
+    const quality = computed({
+        get: () => {
+            return qualityVal.value
+        },
+        set: (newQuality) => {
+            newQuality = parseInt(newQuality)
+            if (_.isNaN(newQuality)) {
+                qualityVal.value = qualityVal.value
+            } else {
+                qualityVal.value = 0 //force watch trigger
+                qualityVal.value = _.clamp(newQuality, qualityRange.min, qualityRange.max)
+            }
+        }
+    })
+
     async function getConfig() {
         const config = await window.api?.readStore('config')
-
         if (config) {
             dir.value = config.watchDir
             remove.value = config.removePng
+            qualityVal.value = config.quality
             quality.value = config.quality
         }
     }
@@ -40,6 +57,8 @@ export function useConfig() {
         dir,
         remove,
         quality,
+        qualityVal,
+        qualityRange,
         getConfig,
         setConfig,
     }
