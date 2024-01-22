@@ -84,7 +84,7 @@ module.exports = () => {
 
             const tray = new Tray(trayIcon)
             tray.setContextMenu(contextMenu)
-            tray.setToolTip('Screenshot png -> jpg')
+            tray.setToolTip('Convert png to jpg')
             tray.on('right-click', () => {
                 tray.popUpContextMenu(contextMenu)
             })

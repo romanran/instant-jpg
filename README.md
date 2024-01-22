@@ -15,3 +15,13 @@ For the frontend part of the app `npm run watch` and CTRL+R inside app's window 
 
 #### Windows executable
 `build:exe` using electron-builder -> dist
+
+#### Icons
+For previewing icons:
+https://pictogrammers.com/library/mdi/
+
+Library: https://github.com/robcresswell/vue-material-design-icons
+Usege:
+import CheckboxMarkedIcon from 'vue-material-design-icons/CheckboxMarked.vue'
+
+<CheckboxMarkedIcon />

@@ -38,6 +38,7 @@
         "jimp": "^0.16.1",
         "lodash": "^4.17.21",
         "vue": "^3.2.37",
+        "vue-material-design-icons": "^5.2.0",
         "workerpool": "^6.4.0"
     },
     "build": {

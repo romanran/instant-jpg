@@ -1,6 +1,6 @@
 <template>
     <div class="convert-list">
-
+        <div v-show="!convertedFiles.length">Waiting for files...</div>
         <p class="convert-list__status" v-html="convertStatus" v-show="convertStatus"></p>
         <div class="convert-list__list" ref="$convertList" v-show="convertStatus">
             <p class="convert-list__filename" :class="file.status" :style="`order: ${file.order};`"
@@ -20,7 +20,6 @@ defineProps({
 })
 defineExpose({
     onEvent() {
-        console.log('aaaaa', $convertList.value.scrollHeight);
         $convertList.value.scrollTo({ left: 0, top: $convertList.value.scrollHeight + 20 })
     }
 })

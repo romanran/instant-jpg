@@ -1,22 +1,48 @@
 <template>
     <div class="settings" :class="converting && 'disabled'">
-        <label class="settings__line settings__label">Directory: <strong>{{ dir }} </strong><button
-                :class="explorerOpen && 'disabled'" @click="setWatchDir">Select directory</button></label>
-        <label class="settings__line settings__label">Trashbin original PNG files: <input type="checkbox" checked
-                v-model="remove" @change="setConfig" /></label>
-        <div class="settings__line">Quality:
+        <!-- Directory select -->
+        <label class="settings__line settings__label">
+            <FolderEditOutlineIcon class="settings__icon" />
+            <span>Directory: <strong>{{ dir }} </strong></span>
+            <button :class="explorerOpen && 'disabled'" @click="setWatchDir">Select directory</button>
+        </label>
+
+        <!-- Trashbin -->
+        <label class="settings__line settings__label">
+            <TrashCanOutlineIcon class="settings__icon" />
+            <span>Trashbin original PNG files&nbsp;&nbsp;</span>
+            <input class="settings__checkbox" type="checkbox" checked v-model="remove" @change="setConfig" />
+            <CheckboxMarkedIcon class="settings__icon" :size="18" v-show="remove" />
+            <CheckboxBlankOutlineIcon class="settings__icon" :size="18" v-show="!remove" />
+        </label>
+
+        <!-- Quality -->
+        <div class="settings__line settings__quality">
+            <TuneIcon class="settings__icon" />
+            <span>Quality</span>
+
+            <!-- Slider -->
             <input ref="$quality" type="range" :min="qualityRange.min" :max="qualityRange.max" v-model.number="quality"
-                @change="setConfig" @input="handleRange" />
-            <span>{{ quality }}</span>
+                @change="setConfig" @input="handleRangeSlider" />
+
+            <!-- Input -->
+            <input class="settings__quality-input" type="number" :min="qualityRange.min" :max="qualityRange.max"
+                :value="quality" @change="onQualityChange" v-on:keyup.enter="onQualityChange">
+
             <VQualityPreview :quality="quality" :quality-range="qualityRange" :images="previews"
-                :number-of-types="numberOfTypes"></VQualityPreview>
+                :number-of-types="numberOfTypes">
+            </VQualityPreview>
         </div>
+
+        <!-- Convert buttons -->
         <div class="settings__line">
             <button @click="() => convertDir(dir)">Convert files in default directory</button>
             <button :class="explorerOpen && 'disabled'" @click="convertCustomDir">Convert files in custom directory</button>
         </div>
+        <h4 class="settings__title">Conversion status</h4>
         <VConvertList :convertStatus="convertStatus" :convertedFiles="convertedFiles" ref="$listComponent"></VConvertList>
     </div>
+
     <div class="overlay" v-if="converting">
         <button class="overlay__button" @click="stopConvert">Stop</button>
         <div class="overlay__image"></div>
@@ -26,18 +52,22 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import VConvertList from './components/VConvertList.vue'
-import VQualityPreview from './components/ui/VQualityPreview.vue'
+import VQualityPreview from './components/QualityPreview/VQualityPreview.vue'
 import { useConfig, useActions, usePreviews } from './logic/handler.js'
+import TuneIcon from 'vue-material-design-icons/Tune.vue';
+import TrashCanOutlineIcon from 'vue-material-design-icons/TrashCanOutline.vue';
+import FolderEditOutlineIcon from 'vue-material-design-icons/FolderEditOutline.vue';
+import CheckboxBlankOutlineIcon from 'vue-material-design-icons/CheckboxBlankOutline.vue';
+import CheckboxMarkedIcon from 'vue-material-design-icons/CheckboxMarked.vue';
 
-const { dir, remove, quality, getConfig, setConfig } = useConfig()
+const { dir, remove, quality, qualityRange, getConfig, setConfig } = useConfig()
 const { convertDir, converting, convertedFiles, convertStatus, workProgress, $listComponent } = useActions()
 const { previews, numberOfTypes } = usePreviews()
 const convertStatusAdditional = ref()
 const explorerOpen = ref(false)
 const $quality = ref()
-const qualityRange = { min: 60, max: 100 }
 initWin()
 
 async function initWin() {
@@ -66,12 +96,22 @@ function stopConvert() {
     window.api?.stopConvert()
 }
 
-function handleRangeSlider() {
+async function handleRangeSlider() {
+    await nextTick()
     const min = $quality.value.min
     const max = $quality.value.max
     const val = $quality.value.value
     $quality.value.style.backgroundSize = ((val - min) * 100) / (max - min) + '% 100%'
 }
+function onQualityChange($event) {
+    $event.target.blur()
+    quality.value = $event.target.value
+}
+
+watch(quality, (newValue) => {
+    handleRangeSlider()
+    setConfig()
+})
 
 onMounted(() => {
     handleRangeSlider()
@@ -83,10 +123,12 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 10px 20px;
-    overflow: auto;
-    line-height: 2;
     height: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 10px 20px;
+    line-height: 2;
+    overflow: auto;
 
     &.disabled {
         * {
@@ -94,6 +136,26 @@ onMounted(() => {
             cursor: default;
         }
     }
+}
+
+.settings__quality {
+    user-select: none;
+}
+
+.settings__quality-input {
+    vertical-align: middle;
+    background: none;
+    color: white;
+    border: none;
+    outline: none;
+    font-family: inherit;
+    font-size: 16px;
+}
+
+.settings__icon {
+    vertical-align: middle;
+    margin-right: 10px;
+    font-size: 0;
 }
 
 .settings__line {
@@ -109,10 +171,17 @@ onMounted(() => {
     }
 }
 
+.settings__title {
+    margin-bottom: 10px;
+}
 
+input[type="checkbox"] {
+    display: none;
+}
 
 input[type='range'] {
     cursor: grab;
+    vertical-align: middle;
     -webkit-appearance: none;
     margin: 5px 10px;
     background: rgba(255, 255, 255, 0.6);
@@ -142,9 +211,6 @@ input[type='range'] {
     }
 }
 
-input[type='checkbox'] {
-    cursor: pointer;
-}
 
 button {
     font-family: inherit;
@@ -158,6 +224,7 @@ button {
     letter-spacing: 0.5px;
     font-size: 16px;
     user-select: none;
+    transition: all 150ms ease-out;
 
     &:first-child {
         margin-left: 0;
