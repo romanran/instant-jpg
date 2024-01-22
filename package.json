@@ -4,15 +4,15 @@
     "version": "1.0.1",
     "description": "InstantJPG - directory watcher for converting PNG's to JPG's on the fly",
     "scripts": {
-        "start": "vite",
-        "watch": "nodemon -L --watch ./src/**/*.* --exec \"npm run build\" ",
-        "electron": "nodemon --watch electron --exec \"electron .\"",
-        "postinstall": "electron-builder install-app-deps",
+        "start": "start npm run watch:vite & npm run watch:electron",
+        "watch:vite": "vite build --watch --mode production",
+        "watch:electron": "nodemon --watch electron --exec \"electron .\"",
         "build": "npm run build:app && npm run build:electron",
         "build:app": "vite build",
         "build:electron": "webpack --mode=production --node-env=production",
         "build:exe": "npm run build && electron-builder --x64 --win portable",
-        "build:installer": "npm run build && electron-builder --x64 --win nsis"
+        "build:installer": "npm run build && electron-builder --x64 --win nsis",
+        "postinstall": "electron-builder install-app-deps"
     },
     "license": "ISC",
     "devDependencies": {
@@ -23,6 +23,7 @@
         "cross-env": "^7.0.3",
         "electron": "^20.0.2",
         "electron-builder": "^23.3.3",
+        "electron-reload": "^2.0.0-alpha.1",
         "nodemon": "^2.0.19",
         "sass": "^1.62.1",
         "terser-webpack-plugin": "^5.3.4",

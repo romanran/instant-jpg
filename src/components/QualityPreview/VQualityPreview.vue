@@ -65,8 +65,6 @@ async function preloadImage() {
     currentOriginalSize.value = await getImageSize(`assets/previews/${type.value}.png`)
 }
 
-onMounted(preloadImage)
-
 watch([type, () => props.quality], preloadImage)
 
 </script>

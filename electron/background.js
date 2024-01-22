@@ -3,12 +3,15 @@
 const { app, protocol, BrowserWindow, Tray, Menu } = require('electron')
 const path = require('path')
 const start = require('./service/main')
+const electronReload = require('electron-reload')
 
 const indexHtmlPatch = path.resolve(path.join(__dirname, '../distRender/index.html'))
 const trayIcon = path.resolve(path.join(__dirname, '../', 'build', 'favicon.ico'))
 
 const Store = require('electron-store')
 const storage = new Store()
+
+electronReload(path.join(__dirname, '../distRender/'))
 
 module.exports = () => {
     protocol.registerSchemesAsPrivileged([{ scheme: 'serve://', privileges: { secure: true, standard: true } }])
